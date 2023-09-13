@@ -2,7 +2,7 @@
 
 
 The code was tested on Windows 10, with [Anaconda](https://www.anaconda.com/download) Python 3.9 and [PyTorch]((http://pytorch.org/)) v2.0.1. 
-[Optional but recommended] NVIDIA GPUs can be used for both training and testing.
+[Optional] NVIDIA GPUs can be used for both training and testing.
 After install Anaconda:
 
 0. [Optional but recommended] create a new conda environment. 
