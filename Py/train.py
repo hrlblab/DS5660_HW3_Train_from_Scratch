@@ -76,6 +76,7 @@ def train(model,
         # Training loop
         for ii, (data, target) in enumerate(train_bar):
             #print(f'train loop.\n')
+            data = data.repeat(1, 3, 1, 1)
             # Clear gradients
             optimizer.zero_grad()
             # Get your output from your model
@@ -123,7 +124,7 @@ def train(model,
 
                 # Validation loop
                 for data, target in valid_loader:
-
+                    data = data.repeat(1, 3, 1, 1)
                     # Forward pass
                     model = model.float()
                     output = model(data.float())
