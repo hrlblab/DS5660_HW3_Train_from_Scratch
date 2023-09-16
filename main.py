@@ -19,7 +19,7 @@ if __name__ == '__main__':
     num_workers = 0
 
     batch_size = 64
-    n_epochs = 10
+    n_epochs = 5
 
     learning_rate = 0.001
 
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     #"""
     # Set up your loss function and optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), learning_rate)
 
     save_file_name = 'mobilenet_v3_model_best_model.pt'
 
@@ -90,12 +90,33 @@ if __name__ == '__main__':
     # get some random training images
     # you may use .next() to get the next iteration of validation dataloader
 
-    images, labels = dataiter.next()
-
+    images, labels = dataiter.__next__()
+    images = images.repeat(1, 3, 1, 1)
     outputs = model(images.float())
     _, predicted = torch.max(outputs, 1)
     # print images
-    imshow(torchvision.utils.make_grid(images))
+    #imshow(torchvision.utils.make_grid(images))
     print('GroundTruth: ', ' '.join('%5s' % categories[labels[j].long()] for j in range(batch_size)))
     print('Prediction: ', ' '.join('%5s' % categories[predicted[j].long()] for j in range(batch_size)))
     """
+
+    # Final prediction
+
+    ids = list(range(batch_size))
+    result = pd.DataFrame(ids, columns=['id'])
+    predictions = []
+    real = []
+    validationiter = iter(valid_loader)
+    dataiter = iter(validationiter)
+
+    data, target = dataiter.__next__()
+    data = data.repeat(1, 3, 1, 1)
+
+    outputs = model(data.float())
+    pred = outputs.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+    predictions += list(pred.cpu().numpy()[:, 0])
+    real += list(target.numpy())
+    result['pred'] = predictions
+    result['real'] = real
+    result.to_csv('result.csv', index=False)
+    print('Result saved in: {}'.format('result.csv'))
